@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<script>
+            document.addEventListener("DOMContentLoaded",startGame);
+            let intervalId;  
+            let context; 
+
+            const canvasWidth = 600;
+            const canvasHeight = 600;
+
+            const Px = 10; // in px  per time unit
+            const fpx = 10;
+
+            const squareWidth = 50;
+            let squareX = 0;
+            let squareY = 275; 
+
+
+            function startGame(){
+                canvas = document.getElementById("arena");
+                canvas.setAttribute("width",canvasWidth);
+                canvas.setAttribute("height",canvasHeight);
+                context = canvas.getContext("2d");
+                intervalId = setInterval(gameLoop,1000/fpx); 
+            }
+
+            function endGame(){
+                window.clearInterval(intervalId);	
+            }
+
+            function gameLoop(){
+                clearSquare();
+                updateSquare();
+                drawSquare();
+            }
+
+            function clearSquare(){
+                context.clearRect(squareX-1, squareY-1, squareWidth+2, squareWidth+2);
+            }
+
+            function updateSquare(){
+                if(squareX + squareWidth >= canvasWidth){
+                    endGame();
+                } else {
+                    squareX = squareX + Px;
+                }
+            }
+
+            function drawSquare(){
+                context.fillStyle= 'red';
+                context.fillRect(squareX, squareY, squareWidth, squareWidth);
+            }   
+    	
+		</script>
+	</head>
+	<body> 
+        <canvas id="arena" style="border: 1px solid #000000"></canvas>
+	</body>
+</html>

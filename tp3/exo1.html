@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<script>
+
+            let intervalleID = setInterval(countdown,1000);
+            let  secondsRemaining = 10 ;
+            function countdown() {
+                
+                
+                console.log(secondsRemaining);
+
+                secondsRemaining = secondsRemaining - 1;
+                if (secondsRemaining < 0) { clearInterval(intervalleID) };
+            };
+
+   
+    	
+		</script>
+	</head>
+	<body> 
+		
+	</body>
+</html>
