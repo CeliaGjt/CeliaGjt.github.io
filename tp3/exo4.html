@@ -1,65 +1,114 @@
+<!doctype html>
 <html>
-	<head>
-		<script>
-            document.addEventListener("DOMContentLoaded",startGame);
-            let intervalId;  
-            let launchID;
-            let context; 
+<head>
+<title>classical game loop</title>
+</style>
+</head>
+<body>
+<canvas id="gameField"></canvas>
+</body>
+<script>
+	
+	//requestAnimationFrame method conveniently replace Setinterval for all animation purpose. It is optimized for 30frame per seconds rendering.
+    const animFrame = window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            window.oRequestAnimationFrame      ||
+            window.msRequestAnimationFrame     ||
+            null ;
+	
+	const canvas = document.getElementById("gameField");
+	canvas.width = 600;
+	canvas.height = 600;
+	const context = canvas.getContext("2d");
 
-            const canvasWidth = 600;
-            const canvasHeight = 600;
+	let wallClock = 0;
 
-            const Px = 10; // in px  per time unit
-            const fpx = 10;
+	const Px = 10;	 
+	const squareWidth= 50;	
 
-            const squareWidth = 50;
-            let squareX = 0;
-            let squareY = 275; 
+	class Square {
+		constructor(context,width, height,x,y,speed, delay){
+			this.context=context;
+			this.width=width;
+			this.height=height;
+			this.x=x;
+			this.y=y;
+			this.speed=speed;
+			this.delay=delay;
+			this.hasStarted=false;
+		}
+
+		clear(){
+			this.context.clearRect(this.x-1, this.y-1, this.width+2, this.height+2);
+		}
+
+		update(){
+			if((this.hasStarted == false) && (this.delay<wallClock)){
+				console.log("starting");
+				this.hasStarted=true;
+			}
 
 
-            function startGame(){
-                canvas = document.getElementById("arena");
-                canvas.setAttribute("width",canvasWidth);
-                canvas.setAttribute("height",canvasHeight);
-                context = canvas.getContext("2d");
-                launchID = setTimeout(launch,2000);     
-            }
+			if( (this.hasStarted == true) && (wallClock%this.speed == 0)){
+				this.x = this.x + Px;
+                this.y = this.y + Px;
+        	}
+		}
 
-            function launch(){
-                window.clearTimeout(launchID);
-                intervalID = setInterval(gameLoop,1000/fpx);
-            }
+		draw(){
+			
+            this.context.fillStyle= 'red';
+            this.context.fillRect(this.x, this.y, this.width, this.height);
+		    	
+		}
 
-            function endGame(){
-                window.clearInterval(intervalId);	
-            }
 
-            function gameLoop(){
-                clearSquare();
-                updateSquare();
-                drawSquare();
-            }
+	}
 
-            function clearSquare(){
-                context.clearRect(squareX-1, squareY-1, squareWidth+2, squareWidth+2);
-            }
 
-            function updateSquare(){
-                if(squareX + squareWidth >= canvasWidth){
-                    endGame();
-                } else {
-                    squareX = squareX + Px;
-                }
-            }
 
-            function drawSquare(){
-                context.fillStyle= 'red';
-                context.fillRect(squareX, squareY, squareWidth, squareWidth);
-            }   
-    	
-		</script>
-	</head>
-	<body> 
-        <canvas id="arena" style="border: 1px solid #000000"></canvas>
-	</body>
+	const objectsInGame = new Array();
+
+    const square1 = new Square(context,squareWidth, squareWidth,100,100,2,0);
+   	const square2 = new Square(context,squareWidth,squareWidth,100,300,4, 100);
+   	const square3 = new Square(context,squareWidth, squareWidth,100,500,6,200);
+
+   	objectsInGame.push(square1);
+   	objectsInGame.push(square2);
+   	objectsInGame.push(square3);
+
+
+
+
+	function clearGame(){
+			objectsInGame.forEach(element => element.clear());
+	}
+
+
+	function updateGame(){
+		wallClock += 1;
+		objectsInGame.forEach(element => element.update());
+	}
+	
+
+	function drawGame(){
+		objectsInGame.forEach(element => element.draw());
+	}
+	
+	
+	 function mainloop(){
+	 	clearGame();
+        updateGame();
+        drawGame();
+        
+        animFrame( mainloop );
+    };
+    
+   
+
+    // start the mainloop
+
+    animFrame( mainloop );
+</script>
 </html>
